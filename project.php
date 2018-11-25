@@ -74,9 +74,12 @@ $email = strtolower($email);
 $userId = getUserId($email);
 if ($userId === null) {
     $userId = addUser($userName, $email, $phone); //addUser()
+
 }
+addOrder($userId, $address, $details);
 
 mail($email, 'Заказ на доставку бургеров', 'DarkBeefBurger за 500 рублей');
+
 
 echo "<p style=\"text-align: center;\">Заказ произведен!</p>";
 
