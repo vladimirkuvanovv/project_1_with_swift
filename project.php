@@ -1,6 +1,4 @@
 <?php
-//require "connectDb.php";
-
 function getUserId($email)
 {
     global $pdo;
@@ -49,11 +47,9 @@ function getConnect($db, $username, $password)
 }
 
 
-
 if (empty($_POST['email'])) {
     return;
 }
-// подключение к БД
 getConnect('burger', 'root', 'root');
 
 $userName = htmlspecialchars($_POST['name'], ENT_QUOTES, 'UTF-8');
@@ -73,7 +69,7 @@ $email = strtolower($email);
 
 $userId = getUserId($email);
 if ($userId === null) {
-    $userId = addUser($userName, $email, $phone); //addUser()
+    $userId = addUser($userName, $email, $phone);
 
 }
 addOrder($userId, $address, $details);
