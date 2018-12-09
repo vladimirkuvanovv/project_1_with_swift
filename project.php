@@ -1,4 +1,7 @@
 <?php
+require 'vendor/autoload.php';
+
+require 'config.php';
 function getUserId($email)
 {
     global $pdo;
@@ -46,10 +49,27 @@ function getConnect($db, $username, $password)
     $pdo->exec('SET Names "utf8"');
 }
 
+function swift($email, $username)
+{
+    $transport = (new Swift_SmtpTransport(HOST, PORT, ENCRYPTION))
+        ->setUsername(EMAIL_FROM)
+        ->setPassword(EMAIL_PASSWORD);
+
+    $mailer = new Swift_Mailer($transport);
+
+    $message = (new Swift_Message('Тестовое письмо'))
+        ->setFrom([EMAIL_FROM => ADMIN_NAME])
+        ->setTo([$email => 'name'])
+        ->attach(\Swift_Attachment::fromPath(__DIR__)->setFilename('Детали заказа.txt'))
+        ->setBody('Спасибо за Ваш заказ, ' . $username . '!');
+
+    $result = $mailer->send($message);
+}
 
 if (empty($_POST['email'])) {
     return;
 }
+
 getConnect('burger', 'root', 'root');
 
 $userName = htmlspecialchars($_POST['name'], ENT_QUOTES, 'UTF-8');
@@ -74,8 +94,12 @@ if ($userId === null) {
 }
 addOrder($userId, $address, $details);
 
-mail($email, 'Заказ на доставку бургеров', 'DarkBeefBurger за 500 рублей');
+swift($email, $userName);
+
+$loader = new Twig_Loader_Filesystem(__DIR__ . '/Views');
+$twig = new Twig_Environment($loader);
+echo $twig->render('main.twig', ['title' => 'Спасибо за заказ', 'text' => 'Мы рады стараться для Вас']);
 
 
-echo "<p style=\"text-align: center;\">Заказ произведен!</p>";
+
 

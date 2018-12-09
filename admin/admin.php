@@ -18,6 +18,7 @@ function getConnect($db, $username, $password)
     $pdo = new PDO($dsn, $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $pdo->exec('SET Names "utf8"');
+
 }
 
 getConnect('burger', 'root', 'root');
